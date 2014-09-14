@@ -1,31 +1,34 @@
 === RSVP Plugin ===
-Contributors: mdedev
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mikede%40mde%2ddev%2ecom&lc=US&item_name=Wordpress%20RSVP%20Plugin&no_note=0&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
+
+Contributors: mdedev, renoirb
 Tags: rsvp, reserve, wedding, guestlist
 Requires at least: 3.0
 Tested up to: 3.9.1
 Stable tag: 1.8.8
 
-Easy to use rsvp plugin originally created for weddings but could be used for other events.
+Easy to use RSVP plugin originally created for weddings but could be used for other events.
 
 == Description ==
 
-This plugin was initially created for a wedding to make rsvp'ing easy as possible for guests. The main things we found lacking 
-in existing plugins was:
+This plugin was initially created for a wedding to make RSVP’ing easy as possible for guests and organizers.
 
-* Couldn't relate attendees together so one person could easily rsvp for their whole family
-* Required people to remember/know some special knowledge (a code, a zipcode, etc...)
+The main things we found lacking in existing plugins was:
 
-**Please Note** - I don't monitor the forums for issues. If you would like some help or would like to see a new feature please email me at mike AT mde DASH dev.com. I will see what I can do to help.
+* Couldn’t relate attendees together so one person could easily RSVP for their whole family
+* Required people to remember/know some special knowledge (a code, a zipcode)
+* Couldn’t make the site completely private for the organizers and the guests
+* Separation of Guests and WordPress users, making things complex to make the site private and other already implemented features
+
+**Please Note** - I don’t monitor the forums for issues. If you would like some help or would like to see a new feature please email me at mike AT mde DASH dev.com. I will see what I can do to help.
 
 The admin functionality allows you to do the following things:
 
-* Specify the opening and close date to rsvp 
-* Specify a custom greeting
-* Specify the RSVP yes and no text
-* Specify the kids meal verbiage
-* Specify the vegetarian meal verbiage 
-* Specify the text for the note question
+* Configure the opening and close date to answer the RSVP
+* Configure a custom greeting
+* Configure the RSVP yes and no text
+* Configure the kids meal verbiage
+* Configure the vegetarian meal verbiage 
+* Configure the text for the note question
 * Enter in a custom thank you
 * Create a custom message / greeting for each guest
 * Import a guest list from an excel sheet (column #1 is the first name, column #2 is the last name, column #3 associated attendees, column #4 custom greeting)
@@ -35,36 +38,68 @@ The admin functionality allows you to do the following things:
 * Create custom questions that can be asked by each attendee
 * Have questions be asked to all guests or limit the question to specific attendees
 * Specify email notifications to happen whenever someone rsvps
+* Binds RSVP guests also as WordPress user
+** Makes it easy to make the site completely private
+** Makes it easy to allow commenting and leverage existing WordPress features
 
 If there are any improvements or modifications you would like to see in the plugin please feel free to contact me at (mike AT mde DASH dev.com) and 
 I will see if I can get them into the plugin for you.  
 
-Available CSS Stylings: 
+Available CSS Class names:
 
-* rsvpPlugin - ID of the main RSVP Container. Each RSVP step will be wrapped in this container 
-* rsvpParagraph - Class name that is used for all paragraph tags on the front end portion of the RSVP
-* rsvpFormField - Class for divs that surround a given form input, which is a combination of a label and at least one form input (could be multiple form inputs)
-* rsvpAdditionalAttendee - Class for the div container that holds each additional RSVP attendee you are associated with
-* additionalRsvpContainer - The container that holds the plus sign that allows for people to add additional attendees
-* rsvpCustomGreeting - ID for the custom greeting div that shows up if that option is enabled
-* rsvpBorderTop - Class for setting a top border on certain divs in the main input form
-* rsvpCheckboxCustomQ - Class for the div that surrounds each custom question checkbox 
-* rsvpClear - A class for div elements that we want to use to set clear both. Currently used only next to rsvpCheckboxCustomQs as they are floated
-* rsvpAdditionalAttendeeQuestions - Class name for the div that wraps around all additional attendee questions
-* rsvpCustomQuestions - Class name for the div that wraps around all custom questions for each attendee
+* `#rsvpPlugin` - The main RSVP Container. Each RSVP step are wrapped within it
+* `.rsvpParagraph` - is used for all paragraph tags on the front end portion of the RSVP
+* `.rsvpFormField` - wraps form inputs, which is a combination of a label and at least one form input (could be multiple form inputs)
+* `.rsvpAdditionalAttendee` - wrappingeach additional RSVP attendees you are associated with
+* `.additionalRsvpContainer` - holds the plus sign that allows for people to add additional attendees
+* `#rsvpCustomGreeting` - custom greeting div that shows up if that option is enabled
+* `.rsvpBorderTop` - Class for setting a top border on certain divs in the main input form
+* `.rsvpCheckboxCustomQ` - Class for the div that surrounds each custom question checkbox 
+* `.rsvpClear` - A class for div elements that we want to use to set clear both. Currently used only next to rsvpCheckboxCustomQs as they are floated
+* `.rsvpAdditionalAttendeeQuestions` - Class name for the div that wraps around all additional attendee questions
+* `.rsvpCustomQuestions` - Class name for the div that wraps around all custom questions for each attendee
+
 
 == Installation ==
 
-1. Update the `rsvp` folder to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Add and/or import your attendees to the plugin and set the options you want
-1. Create a blank page and add 'rsvp-pluginhere' on this page
+1. Install this plugin in your WordPress’ `wp-content/plugins/` directory
+1. Activate through the `Plugins menu in WordPress admin Dashboard
+1. Create a blank page and add `rsvp-pluginhere`
+1. Add the following lines in a configuration file
+
+```php
+$wpRsvpGlobal['guest_pass_overload'] = 'DEFAULTPASSWORDYOUWANNAUSE';
+$wpRsvpGlobal['slug_rsvp_page'] = 'rsvp'; // If permalink is enabled, or
+#$wpRsvpGlobal['slug_rsvp_page'] = 5; // the integer value of the page `post_id=`
+```
+
+=== Optional ===
+
+==== Make the site private ====
+
+If you want to have only your visitors to read the posts and pages, add the following to the `header.php` of your theme.
+
+This snippet will ensure anything that has no session gets redirected to the page you created that has `rsvp-pluginhere`
+
+```php
+if(!is_page($GLOBAL['wpRsvpGlobal']['slug_rsvp_page']) && !is_user_logged_in()){
+  $redirect_to = (!empty($_SERVER['REQUEST_URI'])) ? '?return_to='.urlencode($_SERVER['REQUEST_URI']):null;
+  wp_safe_redirect('/rsvp'.$redirect_to);
+}
+```
+
+==== Suggested extensions ===
+
+The following extensions were also used along this extension.
+
+* Redis-Object-Cache
+
 
 == Frequently Asked Questions ==
 
-= Why can't this plugin do X? =
+= Why can’t this plugin do X? =
 
-Good question, maybe I didn't think about having this feature or didn't feel anyone would use it.  Contact me at mike AT mde DASH dev.com and 
+Good question, maybe I didn’t think about having this feature or didn’t feel anyone would use it.  Contact me at mike AT mde DASH dev.com and 
 I will see if I can get it added for you.  
 
 == Screenshots ==
@@ -74,6 +109,17 @@ I will see if I can get it added for you.
 1. The text you need to add for the rsvp front-end
 
 == Changelog ==
+
+= 1.9 (in development) =
+
+**DONE**
+* Tested the against WordPress 4.0
+* Guests are also WordPress users with built-in "Subscriber" role
+* Upon successful code entry, the Guest becomes a WordPress user
+* Capability to make the site usable exclusively to WordPress users and Guests
+
+**CURRENT**
+* Multi lingual
 
 = 1.8.8 = 
 * Fixed a bug with storing answers to custom questions, was using a comma but that interferred with how some answers were written. Will require saving questions again.
@@ -90,30 +136,30 @@ I will see if I can get it added for you.
 * Added in an option to disable not have guest emails appear to be from the email specified in the notification option. As some hosts will not send out an email with a custom from header. 
 
 = 1.8.4 = 
-* Fixed a stupid bug where the option to hide the email address didn't do it everywhere.
+* Fixed an issue where the option to hide the email address didn’t do what was intended.
 
 = 1.8.3 =
-* Modified the guest emails so that it would appear from the email specified in the option.
+* Modified the guest email address so that it would appear from the email specified in the option.
 * Added the RSVP Options page as a sub-menu item under RSVP Plugin
 * Added in an option to hide the email address
 
 = 1.8.2 =
-* Fixed a bug with the new email field that made it so guests couldn't be added
+* Fixed a bug with the email field that made it so guests couldn’t be added
 
 = 1.8.1 = 
-* Tested the plugin against Wordpress 3.9
-* Added in the option to send a confirmation to the person RSVP'ing. Go to Settings -> RSVP Options and select "Send email to main guest when they RSVP". Thanks to Reydel Leon for the code contributions.
+* Tested the plugin against WordPress 3.9
+* Added in the option to send a confirmation to the person RSVP’ing. Go to Settings -> RSVP Options and select "Send email to main guest when they RSVP". Thanks to Reydel Leon for the code contributions.
 * Added in an option to specify the number of additional guests a person can add
 
 = 1.8.0 = 
 * Added in rsvpCustomQuestions as a div container for custom questions to help with styling
-* Added in a fix to stop auto newlines from paragraphs from happening on older versions of Wordpress. I remove wpautop from the_content filter when RSVP content is found. 
+* Added in a fix to stop auto newlines from paragraphs from happening on older versions of WordPress. I remove wpautop from the_content filter when RSVP content is found. 
 
 = 1.7.9 = 
 * Fixed an issue reported by a user where the private custom questions did not get included with a new additional attendee
 
 = 1.7.8 = 
-* Changed it so the first and last name are displayed in the question "Will X be attending?" where X is the person's name. It used to only display the person's first name. 
+* Changed it so the first and last name are displayed in the question "Will X be attending?" where X is the person’s name. It used to only display the person’s first name. 
 
 = 1.7.7 = 
 * Small layout bugfixes that were introduced in 1.7.6
@@ -124,8 +170,8 @@ I will see if I can get it added for you.
 * Added the option to remove a guest you just tried to add
 
 = 1.7.5 = 
-* Changed how RSVP'ing for associated guests work. You no longer have to select the checkbox but just select the RSVP option (yes or no) for the guest and it will assume you are RSVP'ing for the guest. 
-* Changed the default thank you message so it now has the main person's name for RSVP'ing and any additional people that were RSVP'd.
+* Changed how RSVP’ing for associated guests work. You no longer have to select the checkbox but just select the RSVP option (yes or no) for the guest and it will assume you are RSVP'ing for the guest. 
+* Changed the default thank you message so it now has the main person’s name for RSVP’ing and any additional people that were RSVP’d.
 * Made it possible to associate users with private question on import. See the import page for more details.
 
 = 1.7.4 = 
@@ -172,7 +218,7 @@ I will see if I can get it added for you.
 * Moved some CSS and JavaScript to separate files instead of being included inline
 
 = 1.5.0 =
-* Made it so the plugin would only replace the plugin short code and not all of the page's content
+* Made it so the plugin would only replace the plugin short code and not all of the page’s content
 * Changed it so when the site is running over SSL the included javascript files would also be loaded over SSL
 * Removed deprecated calls to session_unregister so it would work correct on PHP 5.4 and above
 * Changed it so on new installs of RSVP fields that have free-form text will always be UTF-8 to minimize issues with unicode characters
@@ -230,10 +276,10 @@ I will see if I can get it added for you.
 
 = 0.8.0 =
 * Did better variable checking on the sorting functions, as warning could show up depending on the server configuration.
-* Fixed an issue with the checkbox selector in the attendee list not working in Wordpress 2.9.2
+* Fixed an issue with the checkbox selector in the attendee list not working in WordPress 2.9.2
 * Added an export button to the attendee list.  When clicking this button the list will export in the same sorting order as the list
 * Added the ability to associate attendees on import
-* Added in checking when importing so names that already exist don't get imported
+* Added in checking when importing so names that already exist don’t get imported
 * Fixed a warning when session variables were not created on the front-end greeting page
 
 = 0.7.0 =

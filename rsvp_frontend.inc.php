@@ -4,6 +4,7 @@ $rsvp_form_action = htmlspecialchars(rsvp_getCurrentPageURL());
 if(get_option(OPTION_RSVP_DONT_USE_HASH) != "Y") {
   $rsvp_form_action .= "#rsvpArea";
 }
+
 $rsvp_saved_form_vars = array();
 // load some defaults
 $rsvp_saved_form_vars['mainRsvp'] = "";
@@ -17,6 +18,11 @@ function rsvp_handle_output ($intialText, $rsvpText) {
 
 function rsvp_frontend_handler($text) {
 	global $wpdb; 
+
+	if( !is_user_logged_in() ) {
+		unset($_SESSION);
+	}
+
 	$passcodeOptionEnabled = (rsvp_require_passcode()) ? true : false;
 	//QUIT if the replacement string doesn't exist
 	if (!strstr($text,RSVP_FRONTEND_TEXT_CHECK)) return $text;
@@ -31,10 +37,15 @@ function rsvp_frontend_handler($text) {
 	if((strtotime($closeDate) !== false) && (strtotime($closeDate) < time())) {
 		return rsvp_handle_output($text, __(RSVP_START_PARA."The deadline to RSVP for this wedding has passed, please contact the bride and groom to see if there is still a seat for you.".RSVP_END_PARA, 'rsvp-plugin'));
 	}
-	
-	if(isset($_POST['rsvpStep'])) {
+
+	$step = $_POST['rsvpStep'];
+	if(!isset($_POST['rsvpStep']) && isset($_SESSION['rsvpPasscode'])) {
+		$step = 'find';
+	}
+
+	if(isset($step)) {
 		$output = "";
-		switch(strtolower($_POST['rsvpStep'])) {
+		switch(strtolower($step)) {
       case("newattendee"):
         return rsvp_handlenewattendee($output, $text);
         break;
@@ -144,8 +155,8 @@ function rsvp_frontend_prompt_to_edit($attendee) {
 								<input type=\"hidden\" name=\"attendeeID\" value=\"".$attendee->id."\" />
 								<input type=\"hidden\" name=\"rsvpStep\" id=\"rsvpStep\" value=\"editattendee\" />
 								<input type=\"submit\" value=\"".__("Yes", 'rsvp-plugin')."\" onclick=\"document.getElementById('rsvpStep').value='editattendee';\" />
-								<input type=\"submit\" value=\"".__("No", 'rsvp-plugin')."\" onclick=\"document.getElementById('rsvpStep').value='newsearch';\"  />
 							</form>\r\n";
+
   $prompt .= RSVP_END_CONTAINER;
 	return $prompt;
 }
@@ -337,7 +348,7 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
 		$form .= "<div id=\"additionalRsvpContainer\">\r\n
 								<input type=\"hidden\" name=\"additionalRsvp\" id=\"additionalRsvp\" value=\"".count($newRsvps)."\" />
 								<div style=\"text-align:right\"><img ".
-									"src=\"".get_option("siteurl")."/wp-content/plugins/rsvp/plus.png\" width=\"24\" height=\"24\" border=\"0\" id=\"addRsvp\" /></div>".
+									"src=\"/wp-content/plugins/rsvp/plus.png\" width=\"24\" height=\"24\" border=\"0\" id=\"addRsvp\" /></div>".
 							"</div>";
 	}
 						
@@ -511,13 +522,12 @@ function rsvp_find(&$output, &$text) {
 	global $wpdb, $rsvp_form_action;
   $passcodeOptionEnabled = (rsvp_require_passcode()) ? true : false;
   $passcodeOnlyOption = (rsvp_require_only_passcode_to_register()) ? true : false;
-	
+
 	$_SESSION['rsvpFirstName'] = $_POST['firstName'];
 	$_SESSION['rsvpLastName'] = $_POST['lastName'];
 	$passcode = "";
-	if(isset($_POST['passcode'])) {
-		$passcode = $_POST['passcode'];
-		$_SESSION['rsvpPasscode'] = $_POST['passcode'];
+	if(isset($_SESSION['rsvpPasscode'])) {
+		$passcode = $_SESSION['rsvpPasscode'];
 	}
 				
 	$firstName = $_POST['firstName'];

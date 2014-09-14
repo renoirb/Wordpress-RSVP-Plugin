@@ -4,6 +4,7 @@
 	if($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
 		$sql = "CREATE TABLE ".$table." (
 		`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+		`user_id` INT NULL,
 		`firstName` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 		`lastName` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 		`rsvpDate` DATE NULL ,
