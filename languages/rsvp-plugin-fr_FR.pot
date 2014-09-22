@@ -1,0 +1,258 @@
+# Copyright (C) 2014 RSVP
+# This file is distributed under the same license as the RSVP package.
+msgid ""
+msgstr ""
+"Project-Id-Version: RSVP 1.8.8\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/rsvp-dev\n"
+"POT-Creation-Date: 2014-09-22 01:39:13+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-09-21 23:40-0500\n"
+"Last-Translator: Renoir Boulanger <hello@renoirboulanger.com>\n"
+"Language-Team:  <renoir@w3.org>\n"
+"X-Generator: Poedit 1.6.9\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr_FR\n"
+
+#: rsvp_frontend.inc.php:151
+msgid ""
+"Hi %s it looks like you have already RSVP'd. Would you like to edit your "
+"reservation?"
+msgstr ""
+"Bonjour %s, Il semble que vous avez déjà répondu à l’invitation. Voulez-vous "
+"changer votre réponse?"
+
+#: rsvp_frontend.inc.php:157 rsvp_frontend.inc.php:174
+msgid "Yes"
+msgstr "Oui"
+
+#: rsvp_frontend.inc.php:175
+msgid "No"
+msgstr "Non"
+
+#: rsvp_frontend.inc.php:177
+msgid ""
+"Yes, of course I will be there! Who doesn't like family, friends, weddings, "
+"and a good time?"
+msgstr "Mais certainement!"
+
+#: rsvp_frontend.inc.php:179
+msgid ""
+"Um, unfortunately, there is a Star Trek marathon on that day that I just "
+"cannot miss."
+msgstr "Malheureusement, ce ne sera pas possible"
+
+#: rsvp_frontend.inc.php:181
+msgid ""
+"We have the option of getting cheese pizza for the kids (and only kids).  Do "
+"you want pizza instead of \"adult food?\""
+msgstr ""
+
+#: rsvp_frontend.inc.php:183
+msgid ""
+"We also have the option of getting individual vegetarian meals instead of "
+"the fish or meat.  Would you like a vegetarian dinner?"
+msgstr ""
+
+#: rsvp_frontend.inc.php:185
+msgid ""
+"If you have any <strong style=\"color:red;\">food allergies</strong>, please "
+"indicate what they are in the &quot;notes&quot; section below.  Or, if you "
+"just want to send us a note, please feel free.  If you have any questions, "
+"please send us an email."
+msgstr ""
+
+#: rsvp_frontend.inc.php:212
+msgid "So, how about it?"
+msgstr "Alors, avez-vous fait votre choix?"
+
+#: rsvp_frontend.inc.php:247 rsvp_frontend.inc.php:328
+msgid "Email Address"
+msgstr "Adresse courriel"
+
+#: rsvp_frontend.inc.php:271
+msgid "The following people associated with you have already registered"
+msgstr "Voici ceux qui ont été aussi invité et qui sont déjà enregistrés"
+
+#: rsvp_frontend.inc.php:290
+msgid ""
+"The following people are associated with you.  At this time you can RSVP for "
+"them as well."
+msgstr ""
+"Les gens dans la liste suivante sont associés avec vous. Vous avez la "
+"possibilité de répondre à leur place."
+
+#: rsvp_frontend.inc.php:295
+msgid " Will %s be attending?"
+msgstr "Est-ce que %s sera du voyage avec nous?"
+
+#: rsvp_frontend.inc.php:308
+msgid "Does %s need a kids meal?"
+msgstr "Est-ce que %s nécessite des portions pour enfants?"
+
+#: rsvp_frontend.inc.php:318
+msgid "Does %s need a vegetarian meal?"
+msgstr "Est-ce que %s nécessite un régime végétarien?"
+
+#: rsvp_frontend.inc.php:341
+msgid ""
+"Did we slip up and forget to invite someone? If so, please add him or her "
+"here:"
+msgstr "A t’on oublié quelqu’un? Pouvez-vous l’ajouter pour nous:"
+
+#: rsvp_frontend.inc.php:377
+msgid "Person's first name"
+msgstr "Prénom"
+
+#: rsvp_frontend.inc.php:381
+msgid "Person's last name"
+msgstr "Nom de famille"
+
+#: rsvp_frontend.inc.php:386
+msgid "Person's email address"
+msgstr "Adresse courriel"
+
+#: rsvp_frontend.inc.php:399
+msgid "Does this person need a kids meal?"
+msgstr "Est-ce que cette personne prends des repas pour enfants"
+
+#: rsvp_frontend.inc.php:409
+msgid "Does this person need a vegetarian meal?"
+msgstr "Est-ce que cette personne nécessite des repas végétariens?"
+
+#: rsvp_frontend.inc.php:538
+msgid "A first and last name must be specified"
+msgstr "Un prénom et nom de famille doit être inscrit"
+
+#: rsvp_frontend.inc.php:572 rsvp_frontend.inc.php:1017
+msgid ""
+"There are a few more questions we need to ask you if you could please fill "
+"them out below to finish up the RSVP process."
+msgstr ""
+"Il y a quelques autres questions que nous avons besoin de réponse. Pouvez-"
+"vous les remplir avant de terminer la réponse."
+
+#: rsvp_frontend.inc.php:590
+msgid ""
+"We could not find an exact match but could any of the below entries be you?"
+msgstr ""
+"Nous n’avons pas trouvé d’entrée avec ce qu’on a reçu, est-ce qu’une de ces "
+"entrées est en relation avec vous?"
+
+#: rsvp_frontend.inc.php:995
+msgid "Welcome back"
+msgstr "Bienvenue"
+
+#: rsvp_frontend.inc.php:1012
+msgid "Hi"
+msgstr "Salut"
+
+#: rsvp_frontend.inc.php:1040
+msgid "Thank you"
+msgstr "Merci"
+
+#: rsvp_frontend.inc.php:1044
+msgid " for RSVPing."
+msgstr "pour répondre à l’invitation."
+
+#: rsvp_frontend.inc.php:1062
+msgid "Thank you "
+msgstr "Merci"
+
+#: rsvp_frontend.inc.php:1069
+msgid " You will also need to know your password which is"
+msgstr "Vous aurez besoin d’avoir un mot de passe, le voici:"
+
+#: rsvp_frontend.inc.php:1047 rsvp_frontend.inc.php:1074
+msgid "You have also RSVPed for -"
+msgstr "Vous avez répondu pour - "
+
+#: rsvp_frontend.inc.php:1100
+msgid "Please enter the code we provided you to RSVP."
+msgstr "Veuillez vous identifier"
+
+#: rsvp_frontend.inc.php:1122
+msgid "New Attendee Registration"
+msgstr "Ajout d’un nouvel invité"
+
+#: rsvp_frontend.inc.php:1126
+msgid "Need to modify your registration? Start with the below form."
+msgstr "Vous avez besoin de changer votre réponse? Vous pouvez le faire ici."
+
+#: rsvp_frontend.inc.php:195 rsvp_frontend.inc.php:1132 wp-rsvp.php:1033
+msgid "First Name"
+msgstr "Prénom"
+
+#: rsvp_frontend.inc.php:202 rsvp_frontend.inc.php:1134 wp-rsvp.php:1037
+msgid "Last Name"
+msgstr "Nom de famille"
+
+#: rsvp_frontend.inc.php:1138
+msgid "Passcode"
+msgstr "Mot de passe"
+
+#: rsvp_frontend.inc.php:1141
+msgid "Complete your RSVP!"
+msgstr "Répondre à l’invitation"
+
+#: wp-rsvp.php:395
+msgid "Save Changes"
+msgstr "Enregistrer"
+
+#: wp-rsvp.php:470 wp-rsvp.php:1192
+msgid "Bulk Actions"
+msgstr ""
+
+#: wp-rsvp.php:471 wp-rsvp.php:1193
+msgid "Delete"
+msgstr "Supprimer"
+
+#: wp-rsvp.php:473 wp-rsvp.php:1195
+msgid "Apply"
+msgstr "Appliquer"
+
+#: wp-rsvp.php:474
+msgid "Export Attendees"
+msgstr "Exporter la liste d’invités"
+
+#: wp-rsvp.php:1029 wp-rsvp.php:1128 wp-rsvp.php:1399
+msgid "Save"
+msgstr "Enregistrer"
+
+#: wp-rsvp.php:1041
+msgid "Email"
+msgstr "Adresse courriel"
+
+#: wp-rsvp.php:1196
+msgid "Save Sort Order"
+msgstr "Se souvenir de l’ordre de classement"
+
+#: wp-rsvp.php:1444
+msgid "Answer"
+msgstr "Réponse"
+
+#. Plugin Name of the plugin/theme
+msgid "RSVP"
+msgstr "RSVP"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/rsvp-dev/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"This plugin allows guests to RSVP to an event.  It was made initially for "
+"weddings but could be used for other things."
+msgstr ""
+"Ce plugiciel WordPress permet a des invités de répondre à l’invitation qui "
+"leur a été lancée. Ce plugiciel a été fait dans le contexte d’un mariage, "
+"mais peut être utilisé dans d’autres contextes\""
+
+#. Author of the plugin/theme
+msgid "MDE Development, LLC"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://mde-dev.com"
+msgstr ""

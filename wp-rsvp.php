@@ -1,13 +1,14 @@
 <?php
+
 /**
  * @package rsvp
  * @author MDE Development, LLC
- * @version 1.8.8
+ * @version 1.9-dev
  */
 /*
 Plugin Name: RSVP 
 Text Domain: rsvp-plugin
-Plugin URI: http://wordpress.org/extend/plugins/rsvp/
+Plugin URI: http://wordpress.org/extend/plugins/rsvp-dev/
 Description: This plugin allows guests to RSVP to an event.  It was made initially for weddings but could be used for other things.  
 Author: MDE Development, LLC
 Version: 1.8.8
@@ -137,7 +138,7 @@ License: GPL
 
 		return $user_id;
 	}
-	
+
 	require_once("rsvp_frontend.inc.php");
 
 	/*
@@ -198,6 +199,7 @@ License: GPL
 
     return $passcode;
 	}
+
 
 	function rsvp_admin_guestlist_options() {
     global $wpdb;
@@ -548,14 +550,14 @@ License: GPL
 						<?php } ?>
 						<th scope="col" id="customMessage" class="manage-column column-title" style="">Custom Message</th>
 						<th scope="col" id="note" class="manage-column column-title" style="">Note</th>
-						<?php /*
+						<?php
 						if(rsvp_require_passcode()) {
 						?>
 							<th scope="col" id="passcode" class="manage-column column-title" style="">Passcode</th>
 						<?php
 						}
 						
-						*/ ?>
+						?>
 						<?php
 							$qRs = $wpdb->get_results("SELECT id, question FROM ".QUESTIONS_TABLE." ORDER BY sortOrder, id");
 							if(count($qRs) > 0) {
@@ -775,10 +777,10 @@ License: GPL
           $lName = mb_convert_encoding($lName, 'UTF-8', mb_detect_encoding($lName, 'UTF-8, ISO-8859-1', true));
           $email = trim($data->sheets[0]['cells'][$i][3]);
 					$personalGreeting = (isset($data->sheets[0]['cells'][$i][5])) ? $personalGreeting = $data->sheets[0]['cells'][$i][5] : "";
-          //$passcode = (isset($data->sheets[0]['cells'][$i][6])) ? $data->sheets[0]['cells'][$i][6] : "";
-          //if(rsvp_require_unique_passcode() && !rsvp_is_passcode_unique($passcode, 0)) {
+          $passcode = (isset($data->sheets[0]['cells'][$i][6])) ? $data->sheets[0]['cells'][$i][6] : "";
+          if(rsvp_require_unique_passcode() && !rsvp_is_passcode_unique($passcode, 0)) {
             $passcode = rsvp_generate_passcode();
-          //}
+          }
 
 					if(!empty($fName) && !empty($lName)) {
 						$sql = "SELECT id FROM ".ATTENDEES_TABLE." 
@@ -919,36 +921,38 @@ License: GPL
 		global $wpdb;
 		if((count($_POST) > 0) && !empty($_POST['firstName']) && !empty($_POST['lastName'])) {
 			check_admin_referer('rsvp_add_guest');
-			$passcode = rsvp_generate_passcode();
 			
+			$fName = (isset($_POST['firstName']))?filter_var(trim($_POST['firstName']), FILTER_SANITIZE_STRING):null;
+			$lName = (isset($_POST['lastName']))?filter_var(trim($_POST['lastName']), FILTER_SANITIZE_STRING):null;
+			$email = (isset($_POST['email']))?filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL):null;
+			$personalGreeting = (isset($_POST['personalGreeting']))?filter_var(trim($_POST['personalGreeting']), FILTER_SANITIZE_STRING):null;
+			$rsvpStatus = (isset($_POST['rsvpStatus']))?filter_var(trim($_POST['rsvpStatus']), FILTER_SANITIZE_STRING):null;
+
 			if(isset($_SESSION[EDIT_SESSION_KEY]) && is_numeric($_SESSION[EDIT_SESSION_KEY])) {
-				$wpdb->update(ATTENDEES_TABLE, 
-											array("firstName" => trim($_POST['firstName']), 
-											      "lastName" => trim($_POST['lastName']), 
-                            "email" => trim($_POST['email']), 
-											      "personalGreeting" => trim($_POST['personalGreeting']), 
-														"rsvpStatus" => trim($_POST['rsvpStatus'])), 
-											array("id" => $_SESSION[EDIT_SESSION_KEY]), 
-											array("%s", "%s", "%s", "%s", "%s"), 
+				$attendeeId = $_SESSION[EDIT_SESSION_KEY];
+				$wpdb->update(ATTENDEES_TABLE,
+											array("firstName" => $fName,
+											      "lastName" => $lName,
+                            "email" => $email,
+											      "personalGreeting" => $personalGreeting,
+														"rsvpStatus" => $rsvpStatus),
+											array("id" => $attendeeId),
+											array("%s", "%s", "%s", "%s", "%s"),
 											array("%d"));
 				rsvp_printQueryDebugInfo();
-				$attendeeId = $_SESSION[EDIT_SESSION_KEY];
 				$wpdb->query($wpdb->prepare("DELETE FROM ".ASSOCIATED_ATTENDEES_TABLE." WHERE attendeeId = %d", $attendeeId));
 			} else {
 
-				$fName = trim($_POST['firstName']);
-				$lName = trim($_POST['lastName']);
-				$email = trim($_POST['email']);
+				$passcode = rsvp_generate_passcode();
+				$user_id = rsvp_create_local_user($fName, $lName, $email, $passcode);
 
-				$uid = rsvp_create_local_user($fName, $lName, $email, $passcode);
-
-				$wpdb->insert(ATTENDEES_TABLE, array("firstName" => $fName, 
+				$wpdb->insert(ATTENDEES_TABLE, array("firstName" => $fName,
 				                                     "lastName" => $lName,
-                                             "email" => $email, 
-																						 "personalGreeting" => trim($_POST['personalGreeting']), 
-																						 "rsvpStatus" => trim($_POST['rsvpStatus']), 
+                                             "email" => $email,
+																						 "personalGreeting" => $personalGreeting,
+																						 "rsvpStatus" => $rsvpStatus,
 																						 "passcode" => $passcode,
-																						 "user_id" => $uid), 
+																						 "user_id" => $user_id),
 				                               array('%s', '%s', '%s', '%s', '%s', '%s', '%d'));
 				rsvp_printQueryDebugInfo();
 					
@@ -964,6 +968,8 @@ License: GPL
 				}
 			}
 			
+			/*
+			// #TODO Deal with password update AND potential passcode settings switch later
 			if(rsvp_require_passcode()) {
 				if(empty($passcode)) {
 					$passcode = rsvp_generate_passcode();
@@ -977,6 +983,7 @@ License: GPL
 											array("%s"), 
 											array("%d"));
 			}
+			*/
 		?>
 			<p>Attendee <?php echo htmlspecialchars(stripslashes($_POST['firstName']." ".$_POST['lastName']));?> has been successfully saved</p>
 			<p>
@@ -1434,7 +1441,7 @@ License: GPL
 											foreach($aRs as $answer) {
 										?>
 												<tr>
-													<td width="75" align="right"><label for="answer<?php echo $answer->id; ?>">Answer:</label></td>
+													<td width="75" align="right"><label for="answer<?php echo $answer->id; ?>"><?php _e('Answer', 'rsvp-plugin'); ?>:</label></td>
 													<td><input type="text" name="answer<?php echo $answer->id; ?>" id="answer<?php echo $answer->id; ?>" size="40" value="<?php echo htmlspecialchars(stripslashes($answer->answer)); ?>" />
 													 &nbsp; <input type="checkbox" name="deleteAnswer<?php echo $answer->id; ?>" id="deleteAnswer<?php echo $answer->id; ?>" value="Y" /><label for="deleteAnswer<?php echo $answer->id; ?>">Delete</label></td>
 												</tr>
@@ -1579,8 +1586,7 @@ License: GPL
     wp_enqueue_script('rsvp_plugin');
     wp_enqueue_style("rsvp_css");
     
-		
-		load_plugin_textdomain('rsvp-plugin', false, basename( dirname( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain('rsvp-plugin', false, dirname( plugin_basename(__FILE__) ) . '/languages' );
 	}
 	
 	function rsvp_printQueryDebugInfo() {
@@ -1622,4 +1628,3 @@ License: GPL
 	add_action('init', 'rsvp_init');
 	add_filter('the_content', 'rsvp_frontend_handler');
 	register_activation_hook(__FILE__,'rsvp_database_setup');
-?>

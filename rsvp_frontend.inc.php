@@ -31,15 +31,15 @@ function rsvp_frontend_handler($text) {
 	$openDate = get_option(OPTION_OPENDATE);
 	$closeDate = get_option(OPTION_DEADLINE);
 	if((strtotime($openDate) !== false) && (strtotime($openDate) > time())) {
-		return rsvp_handle_output($text, sprintf(__(RSVP_START_PARA."I am sorry but the ability to RSVP for our wedding won't open till <strong>%s</strong>".RSVP_END_PARA, 'rsvp-plugin'), date("m/d/Y", strtotime($openDate))));
+		return rsvp_handle_output($text, RSVP_START_PARA.sprintf(__("I am sorry but the ability to RSVP for our wedding won't open till <strong>%s</strong>", 'rsvp-plugin'), date("m/d/Y", strtotime($openDate))).RSVP_END_PARA);
 	} 
 	
 	if((strtotime($closeDate) !== false) && (strtotime($closeDate) < time())) {
-		return rsvp_handle_output($text, __(RSVP_START_PARA."The deadline to RSVP for this wedding has passed, please contact the bride and groom to see if there is still a seat for you.".RSVP_END_PARA, 'rsvp-plugin'));
+		return rsvp_handle_output($text, RSVP_START_PARA.__("The deadline to RSVP for this wedding has passed, please contact the bride and groom to see if there is still a seat for you.", 'rsvp-plugin').RSVP_END_PARA);
 	}
 
-	$step = $_POST['rsvpStep'];
-	if(!isset($_POST['rsvpStep']) && isset($_SESSION['rsvpPasscode'])) {
+	$step = (isset($_POST['rsvpStep']))?$_POST['rsvpStep']:null;
+	if($step === null && isset($_SESSION['rsvpPasscode'])) {
 		$step = 'find';
 	}
 
@@ -192,14 +192,14 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
   if($attendeeID <= 0) {
     $form .= RSVP_START_PARA;
     $form .= rsvp_BeginningFormField("", "").
-      "<label for=\"attendeeFirstName\">".__("First Name: ", 'rsvp-plugin')."</label>".
+      "<label for=\"attendeeFirstName\">".__("First Name", 'rsvp-plugin').":</label>".
       "<input type=\"text\" name=\"attendeeFirstName\" id=\"attendeeFirstName\" value=\"".htmlspecialchars($rsvp_saved_form_vars['attendeeFirstName'])."\" />".
       RSVP_END_FORM_FIELD;
     $form .= RSVP_END_PARA;
     
     $form .= RSVP_START_PARA;
     $form .= rsvp_BeginningFormField("", "").
-      "<label for=\"attendeeLastName\">".__("Last Name: ", 'rsvp-plugin')."</label>".
+      "<label for=\"attendeeLastName\">".__("Last Name", 'rsvp-plugin').":</label>".
       "<input type=\"text\" name=\"attendeeLastName\" id=\"attendeeLastName\" value=\"".htmlspecialchars($rsvp_saved_form_vars['attendeeLastName'])."\" />".
       RSVP_END_FORM_FIELD;
     $form .= RSVP_END_PARA;
@@ -268,9 +268,13 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
 	$rsvpd = $wpdb->get_results($wpdb->prepare($sql, $attendeeID, $attendeeID, $attendeeID, $attendeeID));
 	if(count($rsvpd) > 0) {
     $form .= "<div class=\"rsvpAdditionalAttendee\">\r\n";
-		$form .= RSVP_START_PARA.__("The following people associated with you have already registered:", 'rsvp-plugin')." ";
+		$form .= RSVP_START_PARA.__("The following people associated with you have already registered", 'rsvp-plugin').": ";
+		$list = '';
 		foreach($rsvpd as $r) {
-			$form .= "<br />".htmlspecialchars($r->firstName." ".$r->lastName);
+			$list .= "<li>".htmlspecialchars($r->firstName." ".$r->lastName).'</li>';
+		}
+		if(!empty($list)) {
+			$form .= '<ul>'.$list.'</ul>';
 		}
 		$form .= RSVP_END_PARA;
     $form .= "</div>";
@@ -348,7 +352,7 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
 		$form .= "<div id=\"additionalRsvpContainer\">\r\n
 								<input type=\"hidden\" name=\"additionalRsvp\" id=\"additionalRsvp\" value=\"".count($newRsvps)."\" />
 								<div style=\"text-align:right\"><img ".
-									"src=\"/wp-content/plugins/rsvp/plus.png\" width=\"24\" height=\"24\" border=\"0\" id=\"addRsvp\" /></div>".
+									"src=\"".get_option("siteurl")."/wp-content/plugins/rsvp/plus.png\" width=\"24\" height=\"24\" border=\"0\" id=\"addRsvp\" /></div>".
 							"</div>";
 	}
 						
@@ -369,7 +373,7 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
 									var numAdditional = jQuery(\"#additionalRsvp\").val();
 									numAdditional++;
 									if(numAdditional > ".$numGuests.") {
-										alert('".__("You have already added ".$numGuests." additional rsvp\'s you can add no more.", 'rsvp-plugin')."');
+										alert('".sprintf(__("You have already added %s additional rsvp’s you can add no more.", 'rsvp-plugin'), $numGuests)."');
 									} else {
 										jQuery(\"#additionalRsvpContainer\").append(\"<div class=\\\"rsvpAdditionalAttendee\\\">\" + \r\n
                         \"<div class=\\\"rsvpAdditionalAttendeeQuestions\\\">\" + \r\n
@@ -523,17 +527,18 @@ function rsvp_find(&$output, &$text) {
   $passcodeOptionEnabled = (rsvp_require_passcode()) ? true : false;
   $passcodeOnlyOption = (rsvp_require_only_passcode_to_register()) ? true : false;
 
-	$_SESSION['rsvpFirstName'] = $_POST['firstName'];
-	$_SESSION['rsvpLastName'] = $_POST['lastName'];
+	$firstName = (isset($_POST['firstName']))?$_POST['firstName']:null;
+	$lastName = (isset($_POST['lastName']))?$_POST['lastName']:null;
+
+	$_SESSION['rsvpFirstName'] = $firstName;
+	$_SESSION['rsvpLastName'] = $lastName;
+
 	$passcode = "";
 	if(isset($_SESSION['rsvpPasscode'])) {
 		$passcode = $_SESSION['rsvpPasscode'];
 	}
 				
-	$firstName = $_POST['firstName'];
-	$lastName = $_POST['lastName'];
-				
-	if(!$passcodeOnlyOption && ((strlen($_POST['firstName']) <= 1) || (strlen($_POST['lastName']) <= 1))) {
+	if(!$passcodeOnlyOption && ((strlen($firstName) <= 1) || (strlen($lastName) <= 1))) {
 		$output = "<p class=\"rsvpParagraph\" style=\"color:red\">".__("A first and last name must be specified", 'rsvp-plugin')."</p>\r\n";
 		$output .= rsvp_frontend_greeting();
 					
@@ -1035,15 +1040,15 @@ function frontend_rsvp_thankyou($thankYouPrimary, $thankYouAssociated) {
 	$customTy = get_option(OPTION_THANKYOU);
 	if(!empty($customTy)) {
 		return nl2br($customTy);
-	} else {    
+	} else {
     $tyText = __("Thank you", 'rsvp-plugin');
     if(!empty($thankYouPrimary)) {
-      $tyText .= " ".htmlspecialchars($thankYouPrimary);
+      $tyText .= " ".htmlspecialchars($thankYouPrimary).' ';
     }
-    $tyText .= __(" for RSVPing.", 'rsvp-plugin');
+    $tyText .= __("for RSVPing.", 'rsvp-plugin');
     
     if(count($thankYouAssociated) > 0) {
-      $tyText .= __(" You have also RSVPed for - ", 'rsvp-plugin');
+      $tyText .= __("You have also RSVPed for -", 'rsvp-plugin');
       foreach($thankYouAssociated as $name) {
         $tyText .= htmlspecialchars(" ".$name).", ";
       }
@@ -1070,7 +1075,7 @@ function rsvp_frontend_new_atendee_thankyou($thankYouPrimary, $thankYouAssociate
     }
     
     if(count($thankYouAssociated) > 0) {
-      $thankYouText .= __("<br /><br />You have also RSVPed for - ", 'rsvp-plugin');
+      $thankYouText .= '<br /><br />'.__("You have also RSVPed for -", 'rsvp-plugin');
       foreach($thankYouAssociated as $name) {
         $thankYouText .= htmlspecialchars(" ".$name).", ";
       }
@@ -1096,7 +1101,7 @@ function rsvp_BeginningFormField($id, $additionalClasses) {
 function rsvp_frontend_greeting() {
   global $rsvp_form_action;
 	$customGreeting = get_option(OPTION_GREETING);
-	$output = RSVP_START_PARA.__("Please enter your first and last name to RSVP.", 'rsvp-plugin').RSVP_END_PARA;
+	$output = RSVP_START_PARA.__("Please enter the code we provided you to RSVP.", 'rsvp-plugin').RSVP_END_PARA;
 	$firstName = "";
 	$lastName = "";
 	$passcode = "";
@@ -1142,4 +1147,3 @@ function rsvp_frontend_greeting() {
 	$output .= RSVP_END_CONTAINER;
 	return $output;
 }
-?>
