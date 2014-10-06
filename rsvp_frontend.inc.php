@@ -23,6 +23,11 @@ function rsvp_frontend_handler($text) {
 		unset($_SESSION);
 	}
 
+	// Redirect to the homepage
+	if(isset($_POST['redirect_to']) && isset($_POST['passcode'])) {
+		wp_safe_redirect(urldecode($_POST['redirect_to']));
+	}
+
 	$passcodeOptionEnabled = (rsvp_require_passcode()) ? true : false;
 	//QUIT if the replacement string doesn't exist
 	if (!strstr($text,RSVP_FRONTEND_TEXT_CHECK)) return $text;
@@ -1142,6 +1147,10 @@ function rsvp_frontend_greeting() {
 		$output .= RSVP_START_PARA."<label for=\"passcode\">".__("Passcode", 'rsvp-plugin').":</label> 
 									 <input type=\"password\" name=\"passcode\" id=\"passcode\" size=\"30\" value=\"".htmlspecialchars($passcode)."\" class=\"required\" autocomplete=\"off\" />".RSVP_END_PARA;
 	}
+
+	// Where would we want to redirect instead, make an option ? #TODO
+	$output .= RSVP_START_PARA."<input type=\"hidden\" value=\"".urlencode(home_url())."\" name=\"redirect_to\" />".RSVP_END_PARA;
+
 	$output .= RSVP_START_PARA."<input type=\"submit\" value=\"".__("Complete your RSVP!", 'rsvp-plugin')."\" />".RSVP_END_PARA;
 	$output .= "</form>\r\n";
 	$output .= RSVP_END_CONTAINER;

@@ -14,6 +14,8 @@ Author: MDE Development, LLC
 Version: 1.8.8
 Author URI: http://mde-dev.com
 License: GPL
+Text Domain: rsvp-plugin
+Domain Path: /languages/
 */
 #
 # INSTALLATION: see readme.txt
@@ -1576,17 +1578,32 @@ License: GPL
     wp_enqueue_script("jquery_table_sort");
 		wp_enqueue_style( 'jquery_ui_stylesheet');
 	}
-	
+
+
+	/**
+	 * Load plugin textdomain.
+	 *
+	 * @since 1.0.0
+	 */
+	function rsvp_load_textdomain() {
+		// Figure out why it gets overloaded
+		$GLOBALS['locale'] = $GLOBALS['sweetie']['locale']->getSelected();
+
+	  load_plugin_textdomain( 'rsvp-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	}
+
 	function rsvp_init() {
-		wp_register_script('jquery_validate', rsvp_getHttpProtocol()."://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.min.js");
+		//echo ', <br/>locale:'; var_dump($GLOBALS['locale']);
+		//echo ', <br/>get_locale:'; var_dump(get_locale());
+		//echo ', <br/>WPLANG:'; var_dump(WPLANG);
+		//echo ', <br/>LC_ALL:'; var_dump(setlocale(LC_ALL, '0'));
+		//echo ', <br/>sweetie:'; var_dump((string) $GLOBALS['sweetie']['locale']);
     wp_register_script('rsvp_plugin', plugins_url("rsvp_plugin.js", RSVP_PLUGIN_FILE));
     wp_register_style('rsvp_css', plugins_url("rsvp_plugin.css", RSVP_PLUGIN_FILE));
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery_validate');
     wp_enqueue_script('rsvp_plugin');
-    wp_enqueue_style("rsvp_css");
-    
-		load_plugin_textdomain('rsvp-plugin', false, dirname( plugin_basename(__FILE__) ) . '/languages' );
+    wp_enqueue_style("rsvp_css");    
 	}
 	
 	function rsvp_printQueryDebugInfo() {
@@ -1622,7 +1639,8 @@ License: GPL
      }
      return $pageURL;
   }
-	
+
+	add_action('plugins_loaded', 'rsvp_load_textdomain');	
 	add_action('admin_menu', 'rsvp_modify_menu');
 	add_action('admin_init', 'rsvp_register_settings');
 	add_action('init', 'rsvp_init');
