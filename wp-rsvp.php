@@ -1593,17 +1593,18 @@ Domain Path: /languages/
 	}
 
 	function rsvp_init() {
+		wp_register_script('jquery_validate', rsvp_getHttpProtocol()."://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.min.js");
+		wp_register_script('rsvp_plugin', plugins_url("rsvp_plugin.js", RSVP_PLUGIN_FILE));
+		wp_register_style('rsvp_css', plugins_url("rsvp_plugin.css", RSVP_PLUGIN_FILE));
+		wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery_validate');
+		wp_enqueue_script('rsvp_plugin');
+		wp_enqueue_style("rsvp_css");
 		//echo ', <br/>locale:'; var_dump($GLOBALS['locale']);
 		//echo ', <br/>get_locale:'; var_dump(get_locale());
 		//echo ', <br/>WPLANG:'; var_dump(WPLANG);
 		//echo ', <br/>LC_ALL:'; var_dump(setlocale(LC_ALL, '0'));
 		//echo ', <br/>sweetie:'; var_dump((string) $GLOBALS['sweetie']['locale']);
-    wp_register_script('rsvp_plugin', plugins_url("rsvp_plugin.js", RSVP_PLUGIN_FILE));
-    wp_register_style('rsvp_css', plugins_url("rsvp_plugin.css", RSVP_PLUGIN_FILE));
-		wp_enqueue_script('jquery');
-		wp_enqueue_script('jquery_validate');
-    wp_enqueue_script('rsvp_plugin');
-    wp_enqueue_style("rsvp_css");    
 	}
 	
 	function rsvp_printQueryDebugInfo() {
@@ -1640,7 +1641,7 @@ Domain Path: /languages/
      return $pageURL;
   }
 
-	add_action('plugins_loaded', 'rsvp_load_textdomain');	
+	add_action('plugins_loaded', 'rsvp_load_textdomain');
 	add_action('admin_menu', 'rsvp_modify_menu');
 	add_action('admin_init', 'rsvp_register_settings');
 	add_action('init', 'rsvp_init');
