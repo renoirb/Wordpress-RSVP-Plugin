@@ -160,6 +160,7 @@ function rsvp_frontend_prompt_to_edit($attendee) {
 								<input type=\"hidden\" name=\"attendeeID\" value=\"".$attendee->id."\" />
 								<input type=\"hidden\" name=\"rsvpStep\" id=\"rsvpStep\" value=\"editattendee\" />
 								<input type=\"submit\" value=\"".__("Yes", 'rsvp-plugin')."\" onclick=\"document.getElementById('rsvpStep').value='editattendee';\" />
+								<input type=\"submit\" value=\"".__("No", 'rsvp-plugin')."\" onclick=\"document.getElementById('rsvpStep').value='newsearch';\"  />
 							</form>\r\n";
 
   $prompt .= RSVP_END_CONTAINER;
@@ -357,7 +358,7 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
 		$form .= "<div id=\"additionalRsvpContainer\">\r\n
 								<input type=\"hidden\" name=\"additionalRsvp\" id=\"additionalRsvp\" value=\"".count($newRsvps)."\" />
 								<div style=\"text-align:right\"><img ".
-									"src=\"".get_option("siteurl")."/wp-content/plugins/rsvp/plus.png\" width=\"24\" height=\"24\" border=\"0\" id=\"addRsvp\" /></div>".
+									"src=\"/wp-content/plugins/rsvp/plus.png\" style=\"width:24px;\" width=\"24\" height=\"24\" border=\"0\" id=\"addRsvp\" /></div>".
 							"</div>";
 	}
 						
@@ -1137,6 +1138,8 @@ function rsvp_frontend_greeting() {
   
 	$output .= "<form name=\"rsvp\" method=\"post\" id=\"rsvp\" action=\"$rsvp_form_action\" autocomplete=\"off\">\r\n";
 	$output .= "	<input type=\"hidden\" name=\"rsvpStep\" value=\"find\" />";
+	$output .= "  <input type=\"hidden\" value=\"".urlencode(home_url())."\" name=\"redirect_to\" id=\"redirect_to\" />";
+
   if(!rsvp_require_only_passcode_to_register()) {
 	$output .= RSVP_START_PARA."<label for=\"firstName\">".__("First Name", 'rsvp-plugin').":</label> 
 								 <input type=\"text\" name=\"firstName\" id=\"firstName\" size=\"30\" value=\"".htmlspecialchars($firstName)."\" class=\"required\" />".RSVP_END_PARA;
@@ -1147,9 +1150,6 @@ function rsvp_frontend_greeting() {
 		$output .= RSVP_START_PARA."<label for=\"passcode\">".__("Passcode", 'rsvp-plugin').":</label> 
 									 <input type=\"password\" name=\"passcode\" id=\"passcode\" size=\"30\" value=\"".htmlspecialchars($passcode)."\" class=\"required\" autocomplete=\"off\" />".RSVP_END_PARA;
 	}
-
-	// Where would we want to redirect instead, make an option ? #TODO
-	$output .= RSVP_START_PARA."<input type=\"hidden\" value=\"".urlencode(home_url())."\" name=\"redirect_to\" />".RSVP_END_PARA;
 
 	$output .= RSVP_START_PARA."<input type=\"submit\" value=\"".__("Complete your RSVP!", 'rsvp-plugin')."\" />".RSVP_END_PARA;
 	$output .= "</form>\r\n";

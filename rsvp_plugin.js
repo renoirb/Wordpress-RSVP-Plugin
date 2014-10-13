@@ -1,4 +1,12 @@
 jQuery(document).ready(function(){
+
+// Think async, thanks http://css-tricks.com/thinking-async/
+jQuery.ajax({
+  url: '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/jquery.validate.min.js',
+  dataType: 'script',
+  cache: true, // otherwise will get fresh copy every page load
+  success: function(data, textStatus, jqXHR) {
+
 	jQuery.validator.addMethod("customNote", function(value, element) {
     if((jQuery("#additionalRsvp").val() > 0) && (jQuery("#note").val() == "")) {
       return false;
@@ -47,4 +55,7 @@ jQuery(document).ready(function(){
 	jQuery("#addRsvp").click(function() {
 		handleAddRsvpClick();
 	});
+
+  } /* End of success callback of $.ajax() */
+});
 });
